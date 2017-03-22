@@ -11,5 +11,5 @@ api.get('/', function(request, response) {
 });
 
 api.listen(api.get('port'), function () {
-  console.log('Node app is running on port', api.get('port'));
+  console.log('Node.js app is running on port', api.get('port'));
 });
