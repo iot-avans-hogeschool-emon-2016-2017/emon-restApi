@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
   },
   "repository": {
@@ -18,8 +17,10 @@
   },
   "homepage": "https://github.com/iot-avans-hogeschool-emon-2016-2017/emon-restApi#readme",
   "dependencies": {
-    "cool-ascii-faces": "^1.3.4",
-    "express": "^4.15.2"
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "lodash": "^4.17.4",
+    "moment": "^2.18.1"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
