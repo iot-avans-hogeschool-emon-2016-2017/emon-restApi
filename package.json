@@ -4,7 +4,8 @@
   "description": "webserver for emon-miniproject",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "cross-env NODE_ENV=development nodemon index.js ",
+    "build": "cross-env NODE_ENV=production npm build",
     "minor": "npm verion minor && git push"
   },
   "repository": {
@@ -22,9 +23,11 @@
     "express": "^4.15.2",
     "jwt-simple": "^0.5.1",
     "lodash": "^4.17.4",
-    "moment": "^2.18.1"
+    "moment": "^2.18.1",
+    "mysql": "^2.13.0"
   },
   "devDependencies": {
+    "cross-env": "^3.2.4",
     "nodemon": "^1.11.0"
   }
 }

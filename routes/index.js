@@ -39,7 +39,7 @@ function validate_token(decoded_token, dUsername) {
   const username = decoded_token.iss;
   var isValid = false;
 
-  if (username == dUsername) {isValid = true;}
+  if (username === dUsername) {isValid = true;}
 
   return isValid;
 }
