@@ -6,6 +6,10 @@ var router = require('./routes');
 var api = express();
 
 api.set('port', (process.env.PORT || 5000));
+var settings = require('./config.json');
+Object.keys(settings).forEach(function (key) {
+  api.set(key, settings[key]);
+});
 
 api.use(bodyParser.urlencoded({extended: true}));
 api.use(bodyParser.json());
