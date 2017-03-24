@@ -17,6 +17,7 @@ api.use(bodyParser.json());
 api.all('*', function (req, res, next) {
 
   console.log('Get in api with', req.method, req.url);
+
   next();
 });
 

@@ -7,19 +7,18 @@ var moment = require('moment');
 
 
 const login = function (req, res) {
-
   const reqUsername = req.body.username || '';
   const reqPassword = req.body.password || '';
 
   if (reqUsername == '' || reqPassword == '') {
-    baseRequest(res);
+    noUsernameOrPassword(res);
     return;
   }
 
   const dbUsername = req.app.get('username');
   const dbPassword = req.app.get('password');
 
-  //function looks in db and checks if username and password are in the database
+  /*@TODO check for username and password in database*/
   if ((reqUsername == dbUsername) && (reqPassword == dbPassword)) {
 
     //token is valid for 10 days
@@ -32,23 +31,28 @@ const login = function (req, res) {
     approve(res, token);
 
   } else {
-    badRequest(res);
+    noUsernameOrPasswordInDB(res);
   }
 };
 
 function approve(res, token) {
   if (!token) {
-    throw 'token is not set';
+    throw 'token is not build';
   }
   res.status(202).json({
     "token": token
   });
 }
 
-function badRequest(res) {
+function noUsernameOrPassword(res) {
   res.status(400).json({
-    "status": 400,
-    "message": "Unknown USER, bye"
+    "message": "no username or password"
+  })
+}
+
+function noUsernameOrPasswordInDB(res) {
+  res.status(404).json({
+    "message": "username of password is incorrect"
   });
 }
 
