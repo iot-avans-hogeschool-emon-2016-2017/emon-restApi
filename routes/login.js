@@ -10,7 +10,7 @@ const login = function (req, res) {
   const reqUsername = req.body.username || '';
   const reqPassword = req.body.password || '';
 
-  if (reqUsername == '' || reqPassword == '') {
+  if (reqUsername === '' || reqPassword === '') {
     noUsernameOrPassword(res);
     return;
   }
@@ -19,7 +19,7 @@ const login = function (req, res) {
   const dbPassword = req.app.get('password');
 
   /*@TODO check for username and password in database*/
-  if ((reqUsername == dbUsername) && (reqPassword == dbPassword)) {
+  if ((reqUsername === dbUsername) && (reqPassword === dbPassword)) {
 
     //token is valid for 10 days
     const expires = moment().add(10, 'days');
