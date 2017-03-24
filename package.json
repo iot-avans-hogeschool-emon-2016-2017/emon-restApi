@@ -4,8 +4,8 @@
   "description": "webserver for emon-miniproject",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=development nodemon index.js ",
-    "build": "cross-env NODE_ENV=production npm build",
+    "start:dev": "cross-env NODE_ENV=development nodemon index.js ",
+    "start:prod": "cross-env NODE_ENV=production npm build",
     "minor": "npm verion minor && git push"
   },
   "repository": {
