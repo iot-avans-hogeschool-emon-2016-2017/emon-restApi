@@ -17,7 +17,7 @@ router.all(/[^(\/login)]/, function (req, res, next) {
     const dUsername = req.app.get('username');
     if (validate_token(decoded_token, dUsername)) {
 
-      //userId from database
+      //@TODO userId from database
       req.app.set('userId', decoded_token.iss);
       next();
     } else {

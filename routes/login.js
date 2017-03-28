@@ -1,44 +1,44 @@
 var jwt = require('jwt-simple');
 var moment = require('moment');
 var database = require('../database');
-console.log(database);
+var _ = require('lodash');
+
 /*
 * Login function is case sensitive
 * default login is admin, admin*/
 
 
 const login = function (req, res) {
-  const reqUsername = req.body.username || '';
-  const reqPassword = req.body.password || '';
+  const userN = req.body.username || '';
+  const passW = req.body.password || '';
 
-  if (reqUsername === '' || reqPassword === '') {
+  if (userN === '' || passW === '') {
     noUsernameOrPassword(res);
     return;
   }
 
-  database.executeQuery('select * from users', function (result) {
-    console.log('users:', result);
+  database.executeQuery('select * from users', function (users) {
+    console.log(userN, passW, 'users:', users);
+    const user = _.find(users.result,{'username':userN, 'password': passW});
+    console.log(user);
+
+    if (user && typeof user !== 'undefined') {
+      const token = buildToken(user, req.app.get('secretKey'));
+      approve(res, token);
+    } else {
+      noUsernameOrPasswordInDB(res);
+    }
   });
-
-  const dbUsername = req.app.get('username');
-  const dbPassword = req.app.get('password');
-
-  /*@TODO check for username and password in database*/
-  if ((reqUsername === dbUsername) && (reqPassword === dbPassword)) {
-
-    //token is valid for 10 days
-    const expires = moment().add(10, 'days');
-
-    const token = jwt.encode({
-      "iss": reqUsername,
-      "exp": expires
-    }, req.app.get('secretKey'));
-    approve(res, token);
-
-  } else {
-    noUsernameOrPasswordInDB(res);
-  }
 };
+
+function buildToken(user, secretKey) {
+  const expires = moment().add(10, 'days');
+
+  return jwt.encode({
+    "iss": user.username,
+    "exp": expires
+  }, secretKey);
+}
 
 function approve(res, token) {
   if (!token) {
