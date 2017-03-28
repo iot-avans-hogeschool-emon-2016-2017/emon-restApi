@@ -21,9 +21,7 @@ const login = function (req, res) {
     if (result.status === 200 ) {
       const users = result.result;
 
-      console.log(userN, passW, 'users:', users);
       const user = _.find(users,{'username':userN, 'password': passW});
-      console.log(user);
 
       if (user && typeof user !== 'undefined') {
         const token = buildToken(user, req.app.get('secretKey'));
@@ -42,7 +40,7 @@ function buildToken(user, secretKey) {
   const expires = moment().add(10, 'days');
 
   return jwt.encode({
-    "iss": user.username,
+    "iss": user.id,
     "exp": expires
   }, secretKey);
 }
