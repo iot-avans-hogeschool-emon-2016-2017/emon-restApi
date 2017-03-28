@@ -17,17 +17,24 @@ const login = function (req, res) {
     return;
   }
 
-  database.executeQuery('select * from users', function (users) {
-    console.log(userN, passW, 'users:', users);
-    const user = _.find(users.result,{'username':userN, 'password': passW});
-    console.log(user);
+  database.executeQuery('select * from users', function (result) {
+    if (result.status === 200 ) {
+      const users = result.result;
 
-    if (user && typeof user !== 'undefined') {
-      const token = buildToken(user, req.app.get('secretKey'));
-      approve(res, token);
-    } else {
-      noUsernameOrPasswordInDB(res);
+      console.log(userN, passW, 'users:', users);
+      const user = _.find(users,{'username':userN, 'password': passW});
+      console.log(user);
+
+      if (user && typeof user !== 'undefined') {
+        const token = buildToken(user, req.app.get('secretKey'));
+        approve(res, token);
+      } else {
+        noUsernameOrPasswordInDB(res);
+      }
+      return;
     }
+
+    serverError(res, result);
   });
 };
 
@@ -58,6 +65,15 @@ function noUsernameOrPassword(res) {
 function noUsernameOrPasswordInDB(res) {
   res.status(404).json({
     "message": "username of password is incorrect"
+  });
+}
+
+function serverError(res,err) {
+  const status = err.status ? err.status : 500;
+  const message = "Interne server fout";
+
+  res.status(status).json({
+    "message": message
   });
 }
 

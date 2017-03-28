@@ -31,8 +31,8 @@ exports.executeQuery = function (query, callback_results) {
 
 const failedQuery = function (err) {
   return {
-    "status": 400,
-    "result":err
+    "status": 500,
+    "message": err
   };
 };
 
