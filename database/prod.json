@@ -1,6 +1,6 @@
 {
-  "host"      : "Localhost:3306",
-  "user"      : "emon-db@localhost",
+  "host"      : "Localhost",
+  "user"      : "emon-db",
   "password"  : "RemcoEnBart",
   "database"  : "emon-db"
 }
