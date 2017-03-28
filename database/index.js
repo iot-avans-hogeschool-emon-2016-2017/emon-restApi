@@ -38,7 +38,7 @@ const failedQuery = function (err) {
 
 const successQuery = function (results) {
   return {
-    "status": 200,
+    "status": results.length === 0 ? 204 : 200,
     "result": results
   }
 };

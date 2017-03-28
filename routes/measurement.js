@@ -1,5 +1,5 @@
 const measurement = function(req, res) {
-  const userId =    req.app.get('userId');
+  const userId =    req.app.get('user').id;
   const timestamp = req.body.timestamp  || '';
   const value =     req.body.value      || '';
   const location =  req.body.location   || '';
