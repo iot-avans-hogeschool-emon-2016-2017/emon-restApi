@@ -1,6 +1,7 @@
 var jwt = require('jwt-simple');
 var moment = require('moment');
-
+var database = require('../database');
+console.log(database);
 /*
 * Login function is case sensitive
 * default login is admin, admin*/
@@ -14,6 +15,10 @@ const login = function (req, res) {
     noUsernameOrPassword(res);
     return;
   }
+
+  database.executeQuery('select * from users', function (result) {
+    console.log('users:', result);
+  });
 
   const dbUsername = req.app.get('username');
   const dbPassword = req.app.get('password');
