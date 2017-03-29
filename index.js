@@ -6,6 +6,7 @@ var database = require('./database');
 var api = express();
 
 api.set('port', (process.env.PORT || 5000));
+api.set('db', database);
 
 var settings = require('./config.json');
 Object.keys(settings).forEach(function (key) {

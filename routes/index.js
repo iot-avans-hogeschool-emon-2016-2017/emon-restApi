@@ -9,7 +9,10 @@ var token = require('./token');
 
 router.all(/[^(\/login)]/, token);
 
+router.get('/measurement', measurement.get);
+
 router.post('/login', login);
-router.post('/measurement', measurement);
+router.post('/measurement', measurement.post);
+
 
 module.exports = router;

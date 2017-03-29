@@ -1,7 +1,10 @@
-var database = require('../database');
+var database = null;
 var _ = require('lodash');
 
-const measurement = function(req, res) {
+// const measurement = function(req, res) {
+module.exports = function(req, res) {
+  database = req.app.get('db');
+
   const userId =    req.app.get('user').id;
   const timestamp = req.body.timestamp  || '';
   const value =     req.body.value      || '';
@@ -30,6 +33,12 @@ const measurement = function(req, res) {
 
 function addMeasurementToDatabase(measurement, callback) {
   const query = buildQuery(measurement);
+
+  if (!database || database === null || database === undefined) {
+    if (callback) callback({"status":500,"message":"no database connected to call"});
+    return;
+  }
+
 
   database.executeQuery(query, function (response) {
     if (callback) callback(response);
@@ -76,5 +85,3 @@ function successPost(res) {
     "message": "posting measurement went well"
   });
 }
-
-module.exports = measurement;
