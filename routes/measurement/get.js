@@ -7,9 +7,17 @@ function getDatabase(req) {
 const all = function (req, res) {
   getDatabase(req);
 
-  res.status(200).json({
-    "message": "measurement get all route"
-  })
+  if (database) {
+    database.executeQuery('select * from measurements', function (response) {
+      res.status(response.status).json({
+        "result":response.result
+      });
+    });
+  } else {
+    res.status(500).json({
+      "message":"no database connected"
+    });
+  }
 };
 
 const byUser = function (req, res) {
@@ -27,7 +35,7 @@ const byUser = function (req, res) {
   } else {
     res.status(500).json({
       "message":"no database connected"
-    })
+    });
   }
 };
 
@@ -37,10 +45,8 @@ function noUserId(res) {
   });
 }
 
-function getMeasurementsById(id, callback) {
 
-  callback({"result":"measurements"})
-}
+
 module.exports = {
   all: all,
   byUser: byUser
