@@ -11,7 +11,7 @@ module.exports = function(req, res) {
   const location =  req.body.location   || '';
 
   if (!userId || !timestamp || !value) {
-    failurePost(res);
+    failurePost(res,"missing data");
     return;
   }
 
@@ -74,9 +74,9 @@ function buildQuery(measurement) {
   return query;
 }
 
-function failurePost(res) {
+function failurePost(res, message) {
   res.status(400).json({
-    "message": "posting measurement went wrong"
+    "message": message ? message : "posting measurement went wrong"
   })
 }
 

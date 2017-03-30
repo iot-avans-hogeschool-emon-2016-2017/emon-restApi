@@ -9,7 +9,8 @@ var token = require('./token');
 
 router.all(/[^(\/login)]/, token);
 
-router.get('/measurement', measurement.get);
+router.get('/measurement', measurement.get.all);
+router.get('/measurement/:id', measurement.get.byUser);
 
 router.post('/login', login);
 router.post('/measurement', measurement.post);
