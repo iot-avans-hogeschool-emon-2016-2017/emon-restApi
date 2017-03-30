@@ -18,7 +18,7 @@ const measurement = function(req, res) {
   };
 
   /*@TODO send measurement to database*/
-
+  console.log(measurement);
   res.status(201).json({
     "message": "measurement is posted"
   });
