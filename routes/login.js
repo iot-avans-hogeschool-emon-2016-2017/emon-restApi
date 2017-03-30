@@ -1,44 +1,49 @@
 var jwt = require('jwt-simple');
 var moment = require('moment');
 var database = require('../database');
-console.log(database);
+var _ = require('lodash');
+
 /*
 * Login function is case sensitive
 * default login is admin, admin*/
 
 
 const login = function (req, res) {
-  const reqUsername = req.body.username || '';
-  const reqPassword = req.body.password || '';
+  const userN = req.body.username || '';
+  const passW = req.body.password || '';
 
-  if (reqUsername === '' || reqPassword === '') {
+  if (userN === '' || passW === '') {
     noUsernameOrPassword(res);
     return;
   }
 
   database.executeQuery('select * from users', function (result) {
-    console.log('users:', result);
+    if (result.status === 200 ) {
+      const users = result.result;
+
+      const user = _.find(users,{'username':userN, 'password': passW});
+
+      if (user && typeof user !== 'undefined') {
+        const token = buildToken(user, req.app.get('secretKey'));
+        approve(res, token);
+      } else {
+        noUsernameOrPasswordInDB(res);
+      }
+      return;
+    }
+
+    serverError(res, result);
   });
-
-  const dbUsername = req.app.get('username');
-  const dbPassword = req.app.get('password');
-
-  /*@TODO check for username and password in database*/
-  if ((reqUsername === dbUsername) && (reqPassword === dbPassword)) {
-
-    //token is valid for 10 days
-    const expires = moment().add(10, 'days');
-
-    const token = jwt.encode({
-      "iss": reqUsername,
-      "exp": expires
-    }, req.app.get('secretKey'));
-    approve(res, token);
-
-  } else {
-    noUsernameOrPasswordInDB(res);
-  }
 };
+
+function buildToken(user, secretKey) {
+  const expires = moment().add(10, 'days');
+
+  return jwt.encode({
+    "iss": user.id,
+    "exp": expires
+  }, secretKey);
+}
 
 function approve(res, token) {
   if (!token) {
@@ -58,6 +63,15 @@ function noUsernameOrPassword(res) {
 function noUsernameOrPasswordInDB(res) {
   res.status(404).json({
     "message": "username of password is incorrect"
+  });
+}
+
+function serverError(res,err) {
+  const status = err.status ? err.status : 500;
+  const message = "Interne server fout";
+
+  res.status(status).json({
+    "message": message
   });
 }
 
