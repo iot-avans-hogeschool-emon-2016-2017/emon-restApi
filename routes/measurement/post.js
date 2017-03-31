@@ -29,6 +29,7 @@ module.exports = function(req, res) {
       failurePost(res);
     }
   });
+  console.log(measurement);
 };
 
 function addMeasurementToDatabase(measurement, callback) {
