@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var router = require('./routes');
 var database = require('./database');
+var cors = require('cors');
 
 var api = express();
 
@@ -15,6 +16,7 @@ Object.keys(settings).forEach(function (key) {
 
 api.use(bodyParser.urlencoded({extended: true}));
 api.use(bodyParser.json());
+api.use(cors());
 
 api.all('*', function (req, res, next) {
 

@@ -20,6 +20,7 @@
   "homepage": "https://github.com/iot-avans-hogeschool-emon-2016-2017/emon-restApi#readme",
   "dependencies": {
     "body-parser": "^1.17.1",
+    "cors": "^2.8.3",
     "express": "^4.15.2",
     "jwt-simple": "^0.5.1",
     "lodash": "^4.17.4",
