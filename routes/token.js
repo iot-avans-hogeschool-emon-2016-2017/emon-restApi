@@ -5,7 +5,7 @@ var _ = require('lodash');
 var database = require('../database');
 
 const token = function (req, res, next) {
-  var token = req.header('X-Access-Token') || '';
+  var token = req.header('X-Access-Token') || req.body.token || '';
 
   if (token) {
     try {

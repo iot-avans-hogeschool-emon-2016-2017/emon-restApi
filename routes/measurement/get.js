@@ -31,7 +31,7 @@ const byUser = function (req, res) {
   if (database) {
     database.executeQuery('SELECT * FROM measurements WHERE users_id = '+id, function (response) {
       res.status(response.status).json({
-        "result": convertMeasurements(response.result)
+        "data": convertMeasurements(response.result)
       });
     });
   } else {
@@ -42,8 +42,8 @@ const byUser = function (req, res) {
 const byBeginAndEndTime = function (req, res) {
   getDatabase(req);
 
-  const begin = req.query['begin'];
-  const end = req.query['end'];
+  const begin = req.body.begin;
+  const end = req.body.end;
 
   if (!begin || !end) {inValidTime(res); return;}
 
@@ -52,7 +52,7 @@ const byBeginAndEndTime = function (req, res) {
       switch(response.status) {
         case 200:
         case 204:
-          res.status(response.status).json({"result": convertMeasurements(response.result)});
+          res.status(response.status).json({"data": convertMeasurements(response.result)});
           break;
         default:
           res.status(response.status).json({"message":response.message})
