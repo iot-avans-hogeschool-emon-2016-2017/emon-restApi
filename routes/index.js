@@ -8,11 +8,14 @@ var token = require('./token');
 
 router.all(/[^(\/login)]/, token);
 
+//post requests
 router.post('/login', login);
 router.post('/measurement', measurement.post);
 
-router.post('/measurements', measurement.post);
+//get by post request
+router.post('/measurements', measurement.get.all);
 router.post('/measurements/user/:id', measurement.get.byUser);
 router.post('/measurements/time/', measurement.get.byTime);
+router.post('/measurements/time/hour', measurement.get.byHourInterval);
 
 module.exports = router;

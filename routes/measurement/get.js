@@ -39,7 +39,7 @@ const byUser = function (req, res) {
   }
 };
 
-const byBeginAndEndTime = function (req, res) {
+const getMeasurementBetweenBeginAndEndTime = function (req,res,converter) {
   getDatabase(req);
 
   const begin = req.body.begin;
@@ -52,7 +52,11 @@ const byBeginAndEndTime = function (req, res) {
       switch(response.status) {
         case 200:
         case 204:
-          res.status(response.status).json({"data": convertMeasurements(response.result)});
+          var data = response.result;
+          if (converter) {
+            data = converter(data);
+          }
+          res.status(response.status).json({"data": data});
           break;
         default:
           res.status(response.status).json({"message":response.message})
@@ -107,8 +111,31 @@ function convertMeasurements(measurements) {
   return measurements;
 }
 
+function hourInterval(measurements) {
+  const hours = {};
+  if (measurements.length === 0) return hours;
+
+  var mTime = moment(measurements[0]['timestamp']);
+  hours[mTime.hour()] = [measurements[0]];
+
+  _.forEach(measurements, function (measurement) {
+    mTime = moment(measurement['timestamp']);
+
+    if (!(mTime.hour() in hours)) {hours[mTime.hour()] = [];}
+
+    hours[mTime.hour()].push(measurement);
+  });
+
+  return hours;
+}
+
 module.exports = {
   all: all,
   byUser: byUser,
-  byTime: byBeginAndEndTime
+  byTime: function (req, res) {
+    getMeasurementBetweenBeginAndEndTime(req,res,convertMeasurements);
+  },
+  byHourInterval: function (req, res) {
+    getMeasurementBetweenBeginAndEndTime(req,res,hourInterval);
+  }
 };
