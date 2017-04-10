@@ -14,7 +14,7 @@ const all = function (req, res) {
   if (database) {
     database.executeQuery('select * from measurements', function (response) {
       res.status(response.status).json({
-        "result": convertMeasurements(response.result)
+        "data": convertMeasurements(response.result)
       });
     });
   } else {
@@ -31,7 +31,7 @@ const byUser = function (req, res) {
   if (database) {
     database.executeQuery('SELECT * FROM measurements WHERE users_id = '+id, function (response) {
       res.status(response.status).json({
-        "data": convertMeasurements(response.result)
+        "data": convertDateTimeToMoment(response.result)
       });
     });
   } else {
@@ -53,6 +53,7 @@ const getMeasurementBetweenBeginAndEndTime = function (req,res,converter) {
         case 200:
         case 204:
           var data = response.result;
+          data = convertDateTimeToMoment(data);
           if (converter) {
             data = converter(data);
           }
@@ -100,7 +101,7 @@ function inValidTime(res) {
   });
 }
 
-function convertMeasurements(measurements) {
+function convertDateTimeToMoment(measurements) {
   const timeKey = "timestamp";
 
   if (measurements.length === 0) return [];
@@ -112,28 +113,45 @@ function convertMeasurements(measurements) {
 }
 
 function hourInterval(measurements) {
-  const hours = {};
-  if (measurements.length === 0) return hours;
-
-  var mTime = moment(measurements[0]['timestamp']);
-  hours[mTime.hour()] = [measurements[0]];
-
+  const data = {};  
+  if (measurements.length === 0) return data;
+  measurements = convertDateTimeToMoment(measurements);
+  
   _.forEach(measurements, function (measurement) {
-    mTime = moment(measurement['timestamp']);
+    var mTime = moment(measurement['timestamp']);
+    const year = mTime.year();
+    const month = mTime.month()+1;
+    const date = mTime.date();
+    const hour = mTime.hour();
 
-    if (!(mTime.hour() in hours)) {hours[mTime.hour()] = [];}
+    try {
+      if (!(year in data))  
+        { data[year] = {}; }
 
-    hours[mTime.hour()].push(measurement);
+      if (!(month in data[year]))
+        { data[year][month] = {}; }
+
+      if (!(date in data[year][month]))
+        { data[year][month][date] = {}; }
+
+      if (!(hour in data[year][month][date])) 
+        { data[year][month][date][hour] = []; }
+
+      data[year][month][date][hour].push(measurement);
+    } catch(e) {
+      console.log(year, month, date, hour, data);
+      console.error(e);
+    }    
   });
 
-  return hours;
+  return data;
 }
 
 module.exports = {
   all: all,
   byUser: byUser,
   byTime: function (req, res) {
-    getMeasurementBetweenBeginAndEndTime(req,res,convertMeasurements);
+    getMeasurementBetweenBeginAndEndTime(req,res);
   },
   byHourInterval: function (req, res) {
     getMeasurementBetweenBeginAndEndTime(req,res,hourInterval);
