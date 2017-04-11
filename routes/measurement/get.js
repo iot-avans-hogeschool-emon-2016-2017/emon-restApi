@@ -206,6 +206,6 @@ module.exports = {
   },
   trend: function (req, res) {
       getTrend(req, res);
-  }
+  },
   getLast: getLast
 };
