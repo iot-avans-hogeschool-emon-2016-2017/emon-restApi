@@ -68,6 +68,31 @@ const getMeasurementBetweenBeginAndEndTime = function (req,res,converter) {
   }
 };
 
+const getTrend = function (req, res) {
+    getDatabase(req);
+
+    const queryTemplate = 'SELECT AVG(value) as value FROM (SELECT timestamp, SUM(value) as value FROM `emon-db`.measurements GROUP BY UNIX_TIMESTAMP(timestamp) DIV 3600 ) AS t1 WHERE HOUR(`timestamp`) = ';
+
+    var responseArray = [];
+    var dbResponseStatus = 0;
+    if (database) {
+        for (let i = 0; i < 24; i++) {
+            let query = queryTemplate + i;
+            database.executeQuery(query, function (response) {
+                console.log(response.result);
+                responseArray.push(response.result[0].value);
+                if (i === 23) {
+                    res.status(response.status).json({
+                        "data": responseArray
+                    });
+                }
+            });
+        }
+    } else {
+        noDb(res);
+    }
+}
+
 
 function getLast(req, res) {
   getDatabase(req);
@@ -179,5 +204,8 @@ module.exports = {
   byHourInterval: function (req, res) {
     getMeasurementBetweenBeginAndEndTime(req,res,hourInterval);
   },
+  trend: function (req, res) {
+      getTrend(req, res);
+  }
   getLast: getLast
 };

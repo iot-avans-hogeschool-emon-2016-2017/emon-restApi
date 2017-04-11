@@ -17,6 +17,7 @@ router.post('/measurements', measurement.get.all);
 router.post('/measurements/user/:id', measurement.get.byUser);
 router.post('/measurements/time/', measurement.get.byTime);
 router.post('/measurements/time/hour', measurement.get.byHourInterval);
+router.post('/measurements/trend', measurement.get.trend);
 
 //get requests, token in query
 router.get('/measurements/last', measurement.get.getLast);
