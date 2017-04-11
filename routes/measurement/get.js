@@ -68,6 +68,29 @@ const getMeasurementBetweenBeginAndEndTime = function (req,res,converter) {
   }
 };
 
+
+function getLast(req, res) {
+  getDatabase(req);
+
+  if (database) {
+    database.executeQuery('SELECT * FROM measurements ORDER BY id DESC LIMIT 1', function(response) {
+      switch(response.status) {
+        case 200:
+        case 204:
+          var data = response.result;
+          data = convertDateTimeToMoment(data);
+          res.status(response.status).json({"data": data});
+          break;
+        default:
+          res.status(response.status).json({"response":response})  
+      }
+    });
+  } else {
+    noDb(res);
+  }
+}
+
+
 function buildQuery(begin, end) {
   function quote(key) {
     return "'"+key+"'";
@@ -155,5 +178,6 @@ module.exports = {
   },
   byHourInterval: function (req, res) {
     getMeasurementBetweenBeginAndEndTime(req,res,hourInterval);
-  }
+  },
+  getLast: getLast
 };
