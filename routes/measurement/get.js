@@ -39,11 +39,16 @@ const byUser = function (req, res) {
   }
 };
 
+function toUTC(time) {
+  time = moment(time);  
+  return time.utc().format(timeString);
+}
+
 const getMeasurementBetweenBeginAndEndTime = function (req,res,converter) {
   getDatabase(req);
 
-  const begin = req.body.begin;
-  const end = req.body.end;
+  const begin = toUTC(req.body.begin);
+  const end = toUTC(req.body.end);
 
   if (!begin || !end) {inValidTime(res); return;}
 
@@ -99,7 +104,7 @@ function buildQuery(begin, end) {
   const query = [
     "SELECT * FROM measurements WHERE timestamp >=",
     quote(begin),
-    "AND timestamp <=",
+    "AND timestamp <",
     quote(end)
   ];
 
@@ -126,11 +131,17 @@ function inValidTime(res) {
 
 function convertDateTimeToMoment(measurements) {
   const timeKey = "timestamp";
+  /*utcOffset, return minutes*/
+  const offSet = moment().utcOffset()/60;
 
   if (measurements.length === 0) return [];
 
   _.map(measurements, function (value) {
-    value[timeKey] = moment(value[timeKey]).format(timeString);
+    const time = moment(value[timeKey])
+    .add(offSet/2, 'h')
+    .format(timeString);
+
+    value[timeKey] = time
   });
   return measurements;
 }
