@@ -75,19 +75,21 @@ const getTrend = function (req, res) {
 
     var responseArray = [];
     var dbResponseStatus = 0;
+    var responseStatus = 0;
     if (database) {
         for (let i = 0; i < 24; i++) {
             let query = queryTemplate + i;
             database.executeQuery(query, function (response) {
                 console.log(response.result);
                 responseArray.push(response.result[0].value);
-                if (i === 23) {
-                    res.status(response.status).json({
-                        "data": responseArray
-                    });
-                }
+                responseStatus = response.status;
             });
         }
+        while(responseArray.length < 24) {}
+        res.status(responseStatus).json({
+            "data": responseArray
+        });
+
     } else {
         noDb(res);
     }
