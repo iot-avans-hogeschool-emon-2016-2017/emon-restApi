@@ -39,16 +39,11 @@ const byUser = function (req, res) {
   }
 };
 
-function toUTC(time) {
-  time = moment(time);  
-  return time.utc().format(timeString);
-}
-
 const getMeasurementBetweenBeginAndEndTime = function (req,res,converter) {
   getDatabase(req);
 
-  const begin = toUTC(req.body.begin);
-  const end = toUTC(req.body.end);
+  const begin = req.body.begin;
+  const end = req.body.end;
 
   if (!begin || !end) {inValidTime(res); return;}
 
@@ -80,19 +75,21 @@ const getTrend = function (req, res) {
 
     var responseArray = [];
     var dbResponseStatus = 0;
-    var responseStatus = 0;
     if (database) {
         for (let i = 0; i < 24; i++) {
             let query = queryTemplate + i;
             database.executeQuery(query, function (response) {
                 console.log(response.result);
                 responseArray.push(response.result[0].value);
-                responseStatus = response.status;
+                if (responseArray.length === 24) {
+                    res.status(response.status).json({
+                        "data": responseArray
+                    });
+                }
             });
         }
-        res.status(responseStatus).json({
-            "data": responseArray
-        });
+        while(responseArray.size < 24) {};
+
 
     } else {
         noDb(res);
@@ -113,7 +110,7 @@ function getLast(req, res) {
           res.status(response.status).json({"data": data});
           break;
         default:
-          res.status(response.status).json({"response":response})  
+          res.status(response.status).json({"response":response})
       }
     });
   } else {
@@ -130,7 +127,7 @@ function buildQuery(begin, end) {
   const query = [
     "SELECT * FROM measurements WHERE timestamp >=",
     quote(begin),
-    "AND timestamp <",
+    "AND timestamp <=",
     quote(end)
   ];
 
@@ -157,17 +154,11 @@ function inValidTime(res) {
 
 function convertDateTimeToMoment(measurements) {
   const timeKey = "timestamp";
-  /*utcOffset, return minutes*/
-  const offSet = moment().utcOffset()/60;
 
   if (measurements.length === 0) return [];
 
   _.map(measurements, function (value) {
-    const time = moment(value[timeKey])
-    .add(offSet/2, 'h')
-    .format(timeString);
-
-    value[timeKey] = time
+    value[timeKey] = moment(value[timeKey]).format(timeString);
   });
   return measurements;
 }
