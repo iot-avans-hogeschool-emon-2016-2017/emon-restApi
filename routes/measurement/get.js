@@ -80,7 +80,7 @@ const getTrend = function (req, res) {
             let query = queryTemplate + i;
             database.executeQuery(query, function (response) {
                 console.log(response.result);
-                responseArray.push(response.result[0].value);
+                responseArray.push(response.result[0].value / 10000);
                 if (responseArray.length === 24) {
                     res.status(response.status).json({
                         "data": responseArray
