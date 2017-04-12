@@ -90,7 +90,6 @@ const getTrend = function (req, res) {
                 responseStatus = response.status;
             });
         }
-        while(responseArray.length < 24) {}
         res.status(responseStatus).json({
             "data": responseArray
         });
